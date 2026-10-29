@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake Data Generator</title>
+  
+  <!-- Local Bootstrap 5 CSS -->
+  <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Local Bootstrap Icons -->
+  <link href="./node_modules/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Local ESM Import Map for Faker & Bootstrap -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@faker-js/faker": "./node_modules/@faker-js/faker/dist/index.js",
+        "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.esm.min.js"
+      }
+    }
+  </script>
+</head>
+<body class="bg-body-tertiary min-vh-100 d-flex flex-column">
+
+  <!-- Header / Navbar -->
+  <nav class="navbar navbar-expand-lg border-bottom bg-body">
+    <div class="container-fluid px-4">
+      <span class="navbar-brand fw-bold d-flex align-items-center gap-2">
+        <i class="bi bi-table text-primary"></i> Fake Data Generator
+      </span>
+      <div class="d-flex align-items-center gap-2">
+        <button id="aboutBtn" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="About & Credits" data-bs-toggle="modal" data-bs-target="#aboutModal">
+          <i class="bi bi-info-lg"></i>
+        </button>
+        <button id="themeToggleBtn" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Toggle Theme">
+          <i id="themeIcon" class="bi bi-moon-stars-fill"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container-fluid flex-grow-1 p-4">
+    <div class="row g-4">
+      
+      <!-- Left Column: Settings & Schema Editor -->
+      <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-body py-3 border-bottom d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0 fw-semibold"><i class="bi bi-sliders me-2"></i>Configuration</h5>
+            <div class="d-flex gap-2">
+              <button id="resetConfigBtn" class="btn btn-sm btn-outline-danger" title="Restore default template">Reset Form</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="generatorForm">
+              
+              <!-- General Settings -->
+              <div class="mb-4">
+                <label for="rowCountInput" class="form-label fw-medium">Number of Rows</label>
+                <input type="number" id="rowCountInput" class="form-control" min="1" max="10000" value="50" required>
+                <div class="form-text">Choose between 1 and 10,000 rows.</div>
+              </div>
+
+              <!-- Column Definitions Header -->
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <label class="form-label fw-medium mb-0">Schema Columns</label>
+                <button type="button" id="addColumnBtn" class="btn btn-sm btn-success">
+                  <i class="bi bi-plus-circle me-1"></i> Add Column
+                </button>
+              </div>
+
+              <!-- Dynamic Schema List -->
+              <div id="columnListContainer" class="d-flex flex-column gap-2 mb-4">
+                <!-- Dynamic rows rendered by JS -->
+              </div>
+
+              <!-- Actions -->
+              <div class="d-grid gap-2">
+                <button type="submit" id="generateBtn" class="btn btn-primary btn-lg">
+                  <i class="bi bi-gear-wide-connected me-2"></i>Generate Dataset
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Results & Preview -->
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-body py-2 border-bottom">
+            <ul class="nav nav-tabs card-header-tabs" id="viewTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview-pane" type="button" role="tab">
+                  <i class="bi bi-eye me-2"></i>Table Preview
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="csv-tab" data-bs-toggle="tab" data-bs-target="#csv-pane" type="button" role="tab">
+                  <i class="bi bi-filetype-csv me-2"></i>Raw CSV
+                </button>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="card-body d-flex flex-column p-0">
+            
+            <!-- Toolbar -->
+            <div class="p-3 border-bottom bg-body-tertiary d-flex align-items-center justify-content-between">
+              <span id="dataStatusText" class="text-muted fs-7">No data generated yet.</span>
+              <button id="downloadCsvBtn" class="btn btn-success" disabled>
+                <i class="bi bi-download me-2"></i>Export CSV
+              </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content flex-grow-1 p-3 overflow-auto">
+              
+              <!-- Preview Tab -->
+              <div class="tab-pane fade show active" id="preview-pane" role="tabpanel">
+                <div id="tableContainer" class="table-responsive">
+                  <div class="text-center text-muted py-5">
+                    <i class="bi bi-table display-4 d-block mb-3 opacity-50"></i>
+                    Click <strong>Generate Dataset</strong> to populate preview.
+                  </div>
+                </div>
+              </div>
+
+              <!-- CSV Preview Tab -->
+              <div class="tab-pane fade h-100" id="csv-pane" role="tabpanel">
+                <textarea id="csvRawOutput" class="form-control font-monospace h-100 bg-body" readonly style="min-height: 350px; resize: none;" placeholder="CSV content will appear here..."></textarea>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 text-muted fs-7 border-top bg-body mt-auto">
+    <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center px-4 gap-2">
+      <span>Fake Data Generator &bull; Built with Bootstrap 5 & Faker.js</span>
+      <a href="https://github.com/YOUR_USERNAME/YOUR_REPOSITORY" target="_blank" rel="noopener noreferrer" class="text-muted text-decoration-none d-flex align-items-center gap-1 hover-primary">
+        <i class="bi bi-github fs-6"></i> <span>GitHub Repository</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- About / Credits Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="aboutModalLabel">
+            <i class="bi bi-info-circle text-primary me-2"></i>About This App
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted">A high-performance, object-oriented client-side fake data generator built with vanilla JavaScript, Bootstrap 5, and the Faker library.</p>
+          
+          <hr class="my-3">
+          
+          <h6 class="fw-semibold mb-2">Development Team</h6>
+          <p class="mb-1"><i class="bi bi-person-fill text-secondary me-2"></i><strong>Ziyad H. Sulaiman</strong></p>
+          
+          <div class="mt-4 pt-2 bg-body-tertiary p-3 rounded border">
+            <small class="text-muted d-block">Version 1.0.0 &bull; Licensed under MIT</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Local Bootstrap JS Bundle -->
+  <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Application Entry Point -->
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
