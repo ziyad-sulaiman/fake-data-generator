@@ -26,7 +26,7 @@ A lightweight, object-oriented web application that serves as a clean graphical 
    ```
 3. Start the development server
     ```bash
-   npm run dev .
+   npm run dev
    ```
 4. Open the provided local URL in your browser.
 
