@@ -24,9 +24,9 @@ A lightweight, object-oriented web application that serves as a clean graphical 
    ```bash
    npm install
    ```
-3. Run a local static server (e.g., using serve or Python):
+3. Start the development server
     ```bash
-   npx serve .
+   npm run dev .
    ```
 4. Open the provided local URL in your browser.
 
