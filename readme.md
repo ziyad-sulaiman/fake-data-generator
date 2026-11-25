@@ -1,13 +1,16 @@
 # Fake Data Generator
 
-A lightweight, object-oriented web application that serves as a clean graphical user interface (GUI) wrapper around [Faker.js](https://fakerjs.dev/). It allows developers and testers to quickly generate mock datasets and export them directly to CSV.
+A lightweight, object-oriented web application that serves as a clean graphical user interface (GUI) wrapper around Faker.js. It allows developers and testers to quickly generate mock datasets and export them directly to CSV, JSON, or a SQLite database (.db).
 
 ## Features
 
 - **Dynamic Schema Builder:** Add, remove, and configure custom columns with various data types (names, emails, addresses, dates, amounts, etc.).
 - **Row Control:** Choose how many rows to generate (up to 10,000).
 - **Live Table Preview:** Instantly preview the generated data (up to the first 10 rows).
-- **CSV Export:** Download the generated dataset instantly as a standard `.csv` file.
+- **Multi-Format Export:** Download the generated dataset directly in your preferred format:
+  - **CSV** (.csv)
+  - **JSON** (.json)
+  - **SQLite** Database (.db) generated client-side via WebAssembly (sql.js)
 - **Theme Switcher:** Toggle between light and dark mode with persistence via `localStorage`.
 - **State Preservation:** Remembers your row count and custom column configurations across sessions.
 
@@ -26,7 +29,7 @@ A lightweight, object-oriented web application that serves as a clean graphical 
    ```
 3. Start the development server
     ```bash
-   npm run dev .
+   npm run dev
    ```
 4. Open the provided local URL in your browser.
 

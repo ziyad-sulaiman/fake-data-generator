@@ -2,7 +2,7 @@ import { ThemeUI } from './ui/ThemeUI.js';
 import { SchemaUI } from './ui/SchemaUI.js';
 import { PreviewUI } from './ui/PreviewUI.js';
 import { DataGenerator } from './services/DataGenerator.js';
-import { CsvExporter } from './services/CsvExporter.js';
+import { DataExporter } from './services/DataExporter.js';
 
 /**
  * Application Orchestrator / Controller Class
@@ -14,9 +14,10 @@ class App {
     this.previewUI = new PreviewUI();
 
     this.generatorForm = document.getElementById('generatorForm');
-    this.downloadCsvBtn = document.getElementById('downloadCsvBtn');
+    this.downloadBtn = document.getElementById('downloadBtn');
+    this.exportFormatSelect = document.getElementById('exportFormatSelect');
 
-    this.currentCsvData = '';
+    this.currentData = '';
   }
 
   /**
@@ -29,7 +30,7 @@ class App {
 
     // Event binding
     this.generatorForm.addEventListener('submit', (e) => this.handleGenerate(e));
-    this.downloadCsvBtn.addEventListener('click', () => this.handleDownload());
+    this.downloadBtn.addEventListener('click', () => this.handleDownload());
   }
 
   /**
@@ -40,26 +41,57 @@ class App {
     e.preventDefault();
 
     const { rowCount, columns } = this.schemaUI.getSchema();
-
     if (!columns || columns.length === 0) {
       alert('Please add at least one column.');
       return;
     }
 
-    // Generate Dataset using services
-    const data = DataGenerator.generate(rowCount, columns);
-    this.currentCsvData = CsvExporter.convertToCsv(data);
+    const generatedRows = DataGenerator.generate(rowCount, columns);
+    this.currentData = Array.isArray(generatedRows) ? generatedRows : [];
 
-    // Render Preview UI
-    this.previewUI.renderData(data, this.currentCsvData);
+    const csvPreview = DataExporter.convertToCsv(this.currentData);
+    this.previewUI.renderData(this.currentData, csvPreview);
+  }
+
+  async handleDownload() {
+    if (!Array.isArray(this.currentData) || this.currentData.length === 0) return;
+
+    const format = this.exportFormatSelect?.value || 'csv';
+    const originalHtml = this.downloadBtn.innerHTML;
+
+    try {
+      this.downloadBtn.disabled = true;
+      this.downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Exporting...';
+      await DataExporter.exportData(format, this.currentData, `dataset_${Date.now()}`);
+    } catch (err) {
+      console.error('Export failed:', err);
+      alert(`Export failed: ${err.message}`);
+    } finally {
+      this.downloadBtn.innerHTML = originalHtml;
+      this.downloadBtn.disabled = this.currentData.length === 0;
+    }
   }
 
   /**
    * Trigger file download
    */
-  handleDownload() {
-    if (!this.currentCsvData) return;
-    CsvExporter.download(this.currentCsvData, `dataset_${Date.now()}.csv`);
+  async handleDownload() {
+    if (!Array.isArray(this.currentData) || this.currentData.length === 0) return;
+
+    const format = this.exportFormatSelect ? this.exportFormatSelect.value : 'csv';
+    const originalHtml = this.downloadBtn.innerHTML;
+
+    try {
+      this.downloadBtn.disabled = true;
+      this.downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Exporting...';
+      await DataExporter.exportData(format, this.currentData, `dataset_${Date.now()}`);
+    } catch (err) {
+      console.error('Export failed:', err);
+      alert(`Export failed: ${err.message}`);
+    } finally {
+      this.downloadBtn.innerHTML = originalHtml;
+      this.downloadBtn.disabled = this.currentData.length === 0;
+    }
   }
 }
 

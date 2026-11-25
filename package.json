@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.2"
+    "bootstrap-icons": "^1.13.2",
+    "sql.js": "^1.17.0"
   }
 }
