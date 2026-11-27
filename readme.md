@@ -1,6 +1,6 @@
 # Fake Data Generator
 
-A lightweight, object-oriented web application that serves as a clean graphical user interface (GUI) wrapper around Faker.js. It allows developers and testers to quickly generate mock datasets and export them directly to CSV, JSON, or a SQLite database (.db).
+A lightweight, object-oriented web application that serves as a clean graphical user interface (GUI) wrapper around [Faker.js](https://fakerjs.dev/). It allows developers and testers to quickly generate mock datasets and export them directly to CSV, JSON, or a SQLite database (`.db`).
 
 ## Features
 
@@ -18,7 +18,8 @@ A lightweight, object-oriented web application that serves as a clean graphical 
 
 - **HTML5 & CSS3** / **Bootstrap 5** (with Bootstrap Icons)
 - **Vanilla JavaScript (ES6 Modules)** following an Object-Oriented Programming (OOP) architecture
-- **Faker.js** for mock data generation
+- **Faker.js** (`@faker-js/faker`) for mock data generation
+- **sql.js** for in-browser SQLite database creation and `.db` binary export
 
 ## Local Development
 
